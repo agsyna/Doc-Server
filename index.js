@@ -18,7 +18,10 @@ mongoose
   .catch((e) => {
     console.log(e);
   });
-
+  
+  app.get('/details', (req, res) => {
+    res.send("works here");
+;})
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`connected at port ${PORT}`);
 });
