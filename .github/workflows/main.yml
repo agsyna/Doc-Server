@@ -1,8 +1,29 @@
-on: push
-jobs: 
+on: 
+  push:
+    branches:
+      - main
+jobs:
   first-job:
     runs-on: ubuntu-latest
-    steps: 
-      - run: node --version
-      - run: npm --version
-      - run: git pull
+    steps:
+      - name: Check Git Version
+        run: git --version
+
+      - name: Check Node.js Version
+        run: node --version
+
+      - name: Check npm Version
+        run: npm --version
+
+      - name: Debug Git Status
+        run: |
+          git status
+          git remote -v
+          git branch -a
+
+      - name: Fetch and Merge
+        run: |
+          git fetch origin main
+          git merge origin/main
+
+      # Continue with other steps or commands as needed
