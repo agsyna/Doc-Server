@@ -6,12 +6,17 @@ const userSchema = mongoose.Schema({
     type: String,
     trim: true,
   },
-  department: {
+  departmentname: {
     required: true,
     type: String,
     trim: true,
   },
-  
+  departmentnumber: {
+    required: true,
+    type: Boolean,
+    trim: true,
+  },
+
   email: {
     required: true,
     type: String,
