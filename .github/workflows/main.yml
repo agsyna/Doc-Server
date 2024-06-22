@@ -1,29 +1,28 @@
-on: 
+name: Auto Update
+
+on:
   push:
     branches:
-      - main
+      - main  # Adjust the branch name as per your repository's default branch
+
 jobs:
-  first-job:
+  auto-update:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Git Version
-        run: git --version
+      - name: Checkout repository
+        uses: actions/checkout@v2  # This action checks out your repository's code
 
-      - name: Check Node.js Version
-        run: node --version
+      - name: Fetch latest changes
+        run: git fetch origin main  # Fetches the latest changes from the main branch
 
-      - name: Check npm Version
-        run: npm --version
+      - name: Merge changes
+        run: git merge origin/main  # Merges the fetched changes into the current branch
 
-      - name: Debug Git Status
+      # You can add more steps here as needed, such as running tests or deploying
+
+      - name: Push changes back to repository
+        if: success()  # Only runs if the previous steps were successful
         run: |
-          git status
-          git remote -v
-          git branch -a
-
-      - name: Fetch and Merge
-        run: |
-          git fetch origin main
-          git merge origin/main
-
-      # Continue with other steps or commands as needed
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git push origin HEAD:main  # Pushes the merged changes back to the main branch
