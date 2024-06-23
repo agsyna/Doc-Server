@@ -36,13 +36,15 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   const file = req.file;
   if(!file)
     {
-      return res.status(400).json({
+      res.status(400).json({
         message : 'Failed to upload file',
       })
     }
     else{
-      return res.status(200).json({
+      console.log(req.file);
+      res.status(200).json({
         message : 'File uploaded successfully',
+
       })
 
     }
