@@ -7,18 +7,6 @@ const auth = require("../middleware/auth");
 const multer = require('multer');
 
 
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  }
-});
-
-const upload = multer({ storage: storage });
-
 // Sign Up
 authRouter.post("/api/signup", async (req, res) => {
   try {
@@ -91,11 +79,6 @@ authRouter.post("/tokenIsValid", async (req, res) => {
 authRouter.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
   res.json({ ...user._doc, token: req.token });
-});
-
-authRouter.post("/api/upload", auth, upload.single('file'), (req, res) => {
-  console.log("File uploaded:", req.file);
-  res.send('File uploaded successfully!');
 });
 
 module.exports = authRouter;

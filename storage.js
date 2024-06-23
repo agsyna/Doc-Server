@@ -1,12 +1,11 @@
 const multer = require('multer');
 let path = require('path');
-const session = require('express-session');
-const mongodbsession = require('connect-mongodb-session')(session);
 
 const getDestination = (req, file, cb) => {
   // const folderName = path.join(__dirname, '/'+req.session.type+req.session.pg);
   const folderName = path.join(__dirname, '/');
   console.log(folderName);
+  console.log(__dirname);
   cb(null, `${folderName}`);
 };
 
