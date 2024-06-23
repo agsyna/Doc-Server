@@ -10,8 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "config": "^3.3.11",
     "express": "^4.19.2",
+    "gridfs-stream": "^1.1.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.3"
+    "mongodb": "^5.9.1",
+    "mongoose": "^8.4.3",
+    "multer": "^1.4.2",
+    "multer-gridfs-storage": "^5.0.2"
   }
 }
