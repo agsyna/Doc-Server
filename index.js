@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 // const config = require("config");
 const multer = require('multer');
-const Grid = require("gridfs-stream");
 const authRouter = require("./routes/auth");
 const File = require("./models/file");
 const User = require("./models/user");
@@ -31,29 +30,23 @@ mongoose
     res.send("works here");
 });
 
+
+
 app.post('/upload', upload.single('file'), async (req, res) => {
-  try {
-    const newFile = new File({
-      filename: req.file.filename,
-      path: req.file.id.toString(),
-      originalname: req.file.originalname,
-      mimetype: req.file.mimetype,
-      size: req.file.size,
-      uploadDate: req.file.uploadDate
-    });
+  const file = req.file;
+  if(!file)
+    {
+      return res.status(400).json({
+        message : 'Failed to upload file',
+      })
+    }
+    else{
+      return res.status(200).json({
+        message : 'File uploaded successfully',
+      })
 
-    await newFile.save();
-
-    res.status(200).json({
-      message: 'File uploaded successfully',
-      file: req.file,
-    });
-  } catch (error) {
-    res.status(400).json({
-      message: 'Failed to upload file',
-      error: error.message,
-    });
-  }
+    }
+  
 });
 
 //To display the uploaded files

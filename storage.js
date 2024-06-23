@@ -1,19 +1,33 @@
 const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
-const mongoose = require('mongoose');
+let path = require('path');
+const session = require('express-session');
+const mongodbsession = require('connect-mongodb-session')(session);
 
-const DB = "mongodb+srv://syna:syna%401234@cluster0.5qwieuf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const getDestination = (req, file, cb) => {
+  // const folderName = path.join(__dirname, '/'+req.session.type+req.session.pg);
+  const folderName = path.join(__dirname, '/');
+  console.log(folderName);
+  cb(null, `${folderName}`);
+};
 
-const storage = new GridFsStorage({
-  url: DB,
-  file: (req, file) => {
-    return {
-      bucketName: 'uploads',
-      filename: `${Date.now()}-${file.originalname}`
-    };
-  }
+const storage = multer.diskStorage({
+  destination: getDestination,
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
 });
 
-const upload = multer({ storage });
+
+const upload = multer({
+  limits: { fileSize: 45 * 1024 * 1024 }, //5 mbs
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only pdf files are allowed.'), false);
+    }
+  },
+  storage: storage,
+});
 
 module.exports = upload;
