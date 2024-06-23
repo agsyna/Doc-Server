@@ -27,7 +27,6 @@ mongoose
     console.log(e);
   });
   
-<<<<<<< HEAD
   app.get('/details', (req, res) => {
     res.send("works here");
 });
@@ -68,11 +67,6 @@ app.get('/files', async (req, res) => {
   }
 });
 
-=======
-//   app.get('/details', (req, res) => {
-//     res.send("works here");
-// ;})
->>>>>>> 8195619a69655c3f9c5ba1cc11c8db433126cc15
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`connected at port ${PORT}`);
 });
