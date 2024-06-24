@@ -16,6 +16,11 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     trim: true,
   },
+  profileurl: {
+    required: true,
+    type: String,
+    trim: true,
+  },
 
   email: {
     required: true,
