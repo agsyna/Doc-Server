@@ -8,6 +8,7 @@ const User = require("./models/user");
 const upload = require('./storage');
 const { Readable } = require("stream");
 let path = require("path");
+const fs = require("fs");
 
 
 
@@ -56,15 +57,18 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 });
 
 //To display the uploaded files
-app.get('/files', async (req, res) => {
-  try {
-    // res.send("works here");
-    const files = await File.find();
-    res.status(200).json(files);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve files', error: error.message });
-  }
+app.get('/files', (req, res) => {
+  const directoryPath = path.join(__dirname, '1');
+  
+  fs.readdir(directoryPath, (error, files) => {
+    if (error) {
+      res.status(400).json({ message: 'Failed'});
+    } else {
+      res.status(200).json(files);
+    }
+  });
 });
+
 
 app.listen(PORT, () => {
   console.log(`connected at port ${PORT}`);
