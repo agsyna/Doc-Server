@@ -53,7 +53,34 @@ authRouter.post("/api/signin", async (req, res) => {
       return res.status(400).json({ msg: "Incorrect password." });
     }
 
-    const token = jwt.sign({ id: user._id }, "passwordKey");
+    const token = jwt.sign({
+       id: user._id }, 
+       "passwordKey", {
+        expiresIn: '30m'
+       });
+
+    
+
+       const date = new Date();
+       jwt.verify(token, 'secretKey', function(err, decoded) {
+        if (err) {
+            console.log(`${date.getHours()}:${date.getMinutes()}
+                                           :${date.getSeconds()}`);
+            console.log(err);
+        }
+        else {
+            console.log(`${date.getHours()}:${date.getMinutes()}
+                                           :${date.getSeconds()}`);
+            console.log("Token verifified successfully");
+        }
+      });
+       console.log(`Token Generated at:- ${date.getHours()}
+                               :${date.getMinutes()}
+                               :${date.getSeconds()}`);
+
+      console.log(token);
+
+
     res.json({ token, ...user._doc });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -63,6 +90,7 @@ authRouter.post("/api/signin", async (req, res) => {
 authRouter.post("/tokenIsValid", async (req, res) => {
   try {
     const token = req.header("x-auth-token");
+
     if (!token) return res.json(false);
     const verified = jwt.verify(token, "passwordKey");
     if (!verified) return res.json(false);

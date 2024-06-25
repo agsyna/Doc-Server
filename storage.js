@@ -9,6 +9,12 @@ const getDestination = async (req, file, cb) => {
   const user = await User.findById(req.user);
   // console.log(user);
   // console.log();
+
+  
+  if (!user) {
+    return cb(new Error('User not found'), null);
+  }
+
   
   const folderName = path.join(__dirname, '/deptfolders/'+ user.departmentnumber+'/');
   console.log(folderName);
