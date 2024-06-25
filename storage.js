@@ -1,9 +1,16 @@
 const multer = require('multer');
 let path = require('path');
+const mongoose = require("mongoose");
+const User = require("./models/user");
 
-const getDestination = (req, file, cb) => {
+
+const getDestination = async (req, file, cb) => {
   // const folderName = path.join(__dirname, '/'+req.session.type+req.session.pg);
-  const folderName = path.join(__dirname, '/deptfolders/1/');
+  const user = await User.findById(req.user);
+  // console.log(user);
+  // console.log();
+  
+  const folderName = path.join(__dirname, '/deptfolders/'+ user.departmentnumber+'/');
   console.log(folderName);
   console.log(__dirname);
   cb(null, `${folderName}`);

@@ -59,8 +59,10 @@ app.post('/upload', auth, upload.single('file'),  (req, res) => {
 });
 
 //To display the uploaded files
-app.get('/files', (req, res) => {
-    const directoryPath = path.join(__dirname, 'deptfolders/1/');
+app.get('/files', auth, async (req, res) => {
+  const user = await User.findById(req.user);
+  
+    const directoryPath = path.join(__dirname, '/deptfolders/'+department.number+'/');
     var fdarray =[];
     fs.readdir(directoryPath, (error, files) => {
       if (error) {
