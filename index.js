@@ -42,11 +42,6 @@ mongoose
 app.post('/upload', auth, upload.single('file'),  (req, res) => {
   const file = req.file;
 
-  const data = req.body; //date, natureofevent, event
-
-  console.log(file);
-  console.log(data);
-
   if(!file)
     {
       res.status(400).json({
@@ -54,9 +49,9 @@ app.post('/upload', auth, upload.single('file'),  (req, res) => {
       })
     }
     else{
-      console.log(req.file);
       res.status(200).json({
         message : 'File uploaded successfully',
+        filename : (file.filename).toString(),
 
       })
 
