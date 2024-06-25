@@ -41,6 +41,12 @@ mongoose
 
 app.post('/upload', auth, upload.single('file'),  (req, res) => {
   const file = req.file;
+
+  const data = req.body; //date, natureofevent, eventname
+
+  console.log(file);
+  console.log(data);
+
   if(!file)
     {
       res.status(400).json({
