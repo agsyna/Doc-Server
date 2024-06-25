@@ -56,7 +56,7 @@ authRouter.post("/api/signin", async (req, res) => {
     const token = jwt.sign({
        id: user._id }, 
        "passwordKey", {
-        expiresIn: '30m'
+        expiresIn: '168h'
        });
 
     
