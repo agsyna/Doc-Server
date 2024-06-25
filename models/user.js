@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-    trim: true,
-  },
   departmentname: {
     required: true,
     type: String,
@@ -13,7 +8,7 @@ const userSchema = mongoose.Schema({
   },
   departmentnumber: {
     required: true,
-    type: Boolean,
+    type: Number,
     trim: true,
   },
   profileurl: {
