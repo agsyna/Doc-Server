@@ -62,8 +62,10 @@ app.post('/upload', auth, upload.single('file'),  (req, res) => {
 app.get('/files', auth, async (req, res) => {
   const user = await User.findById(req.user);
   
-    const directoryPath = path.join(__dirname, '/deptfolders/'+req.departmentnumber+'/');
+    const directoryPath = path.join(__dirname, '/deptfolders/'+ user.departmentnumber+'/');
+    
     var fdarray =[];
+    // console.log(directoryPath);
     fs.readdir(directoryPath, (error, files) => {
       if (error) {
         res.status(400).json({ message: 'Failed'});
