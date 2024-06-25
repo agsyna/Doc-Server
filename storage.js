@@ -3,7 +3,7 @@ let path = require('path');
 
 const getDestination = (req, file, cb) => {
   // const folderName = path.join(__dirname, '/'+req.session.type+req.session.pg);
-  const folderName = path.join(__dirname, '/1/');
+  const folderName = path.join(__dirname, '/deptfolders/');
   console.log(folderName);
   console.log(__dirname);
   cb(null, `${folderName}`);
