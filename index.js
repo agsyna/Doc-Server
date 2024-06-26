@@ -1,13 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-// const config = require("config");
-const multer = require("multer");
 const auth = require("./middleware/auth");
 const authRouter = require("./routes/auth");
-const File = require("./models/file");
 const User = require("./models/user");
 const upload = require("./storage");
-const { Readable } = require("stream");
 let path = require("path");
 const fs = require("fs");
 
@@ -55,27 +51,19 @@ app.get("/files", auth, async (req, res) => {
   const user = await User.findById(req.user);
   const directoryPath = path.join(
     __dirname,
-    "/deptfolders/" + user.departmentnumber + "/"
+    "/json/" + user.departmentnumber + ".json"
   );
-  var fdarray = [];
-  // console.log(directoryPath);
-  fs.readdir(directoryPath, (error, files) => {
-    if (error) {
-      res.status(400).json({ message: "Failed" });
+  fs.readFile(directoryPath, "utf8", (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(400).json({
+        message: "Error in read /files",
+      });
     } else {
-      for (var i = 0; i < files.length; i++) {
-        if (
-          files[i].substring(files[i].length - 4, files[i].length) == ".pdf"
-        ) {
-          fdarray.push(files[i]);
-        }
-      }
-      res.status(200).json(fdarray);
+      res.status(200).json(JSON.parse(data));
     }
   });
 });
-
-// json\1.json
 
 //to read jsondata from designated files
 app.post("/entry", auth, async (req, res) => {
