@@ -111,7 +111,7 @@ app.post("/entry", auth, async (req, res) => {
   }
 });
 
-//to read jsondata from designated files
+//to delete jsondata and designated files
 app.post("/delete", auth, async (req, res) => {
   try {
     const { filename } = req.body;
@@ -149,9 +149,6 @@ app.post("/delete", auth, async (req, res) => {
             }
           }
           if (flag) {
-            // console.log("deleted -----------");
-            // console.log(data2);
-            // console.log(JSON.stringify(data2));
             fs.writeFile(jsonfilename, JSON.stringify(data2), (err) => {
               if (err) {
                 console.log(err);
@@ -188,9 +185,6 @@ app.post("/delete", auth, async (req, res) => {
               }
             }
             if (flag) {
-              // console.log("deleted -----------");
-              // console.log(data2);
-              // console.log(JSON.stringify(data2));
               fs.writeFile(jsonfilename, JSON.stringify(data2), (err) => {
                 if (err) {
                   console.log(err);
@@ -211,6 +205,36 @@ app.post("/delete", auth, async (req, res) => {
         res.status(500).json({ error: e.message });
       }
     }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+//to download
+app.post("/download", auth, async (req, res) => {
+  try {
+    const {filename } = req.body;
+    if(filename == null || filename == undefined){
+      return res.status(400).json({
+        message: "[DOWNLOAD] filename not found",
+      })
+    }
+    const user = await User.findById(req.user);
+
+    const directoryPath = path.join(__dirname, '/deptfolders/' + user.departmentnumber + '/' + filename);
+
+    fs.readFile(directoryPath, (err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(400).json({
+          message: "[DOWNLOAD] Error in read",
+        });
+      } else {
+        res.status(200);
+        res.contentType("application/pdf");
+        res.send(data);
+      }
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
