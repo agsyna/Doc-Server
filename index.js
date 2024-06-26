@@ -114,7 +114,7 @@ app.post("/entry", auth, async (req, res) => {
 //to read jsondata from designated files
 app.post("/delete", auth, async (req, res) => {
   try {
-    const {filename} = req.body;
+    const { filename } = req.body;
     const user = await User.findById(req.user);
 
     const jsonfilename = path.join(
@@ -122,9 +122,9 @@ app.post("/delete", auth, async (req, res) => {
       "/json/" + user.departmentnumber + ".json"
     );
 
-    const directoryPath = path.join(__dirname, '/deptfolders/'+ user.departmentnumber+'/');
-    try{
-      fs.unlinkSync(directoryPath+filename);
+    const directoryPath = path.join(__dirname, '/deptfolders/' + user.departmentnumber + '/');
+    try {
+      fs.unlinkSync(directoryPath + filename);
 
       fs.readFile(jsonfilename, "utf8", (err, data) => {
         if (err) {
@@ -134,17 +134,21 @@ app.post("/delete", auth, async (req, res) => {
           });
         } else {
           data = JSON.parse(data);
-          var i=-1;
-          for(; i<data.length ; i++){
-            if(data[i]["filename"] == filename){
-              break;
+          var data2 = [];
+          var flag = false;
+          var i = 0;
+          for (; i < data.length; i++) {
+            if (data[i]["filename"] == filename) {
+              flag = true;
+            } else {
+              data2.push(data[i]);
             }
           }
-          if(i>=0){
-            delete data[i][filename];
-            console.log("deleted -----------");
-            console.log(data);
-            fs.writeFile(jsonfilename, JSON.stringify(data), (err) => {
+          if (flag) {
+            // console.log("deleted -----------");
+            // console.log(data2);
+            // console.log(JSON.stringify(data2));
+            fs.writeFile(jsonfilename, JSON.stringify(data2), (err) => {
               if (err) {
                 console.log(err);
                 res.status(400).json({
@@ -160,8 +164,49 @@ app.post("/delete", auth, async (req, res) => {
         }
       });
     }
-    catch (e){
-      res.status(500).json({ error: e.message });
+    catch (e) {
+      if (e.code === 'ENOENT') {
+        fs.readFile(jsonfilename, "utf8", (err, data) => {
+          if (err) {
+            console.log(err);
+            res.status(400).json({
+              message: "Error in read",
+            });
+          } else {
+            data = JSON.parse(data);
+            var data2 = [];
+            var flag = false;
+            var i = 0;
+            for (; i < data.length; i++) {
+              if (data[i]["filename"] == filename) {
+                flag = true;
+              } else {
+                data2.push(data[i]);
+              }
+            }
+            if (flag) {
+              // console.log("deleted -----------");
+              // console.log(data2);
+              // console.log(JSON.stringify(data2));
+              fs.writeFile(jsonfilename, JSON.stringify(data2), (err) => {
+                if (err) {
+                  console.log(err);
+                  res.status(400).json({
+                    message: "File update failed",
+                  });
+                } else {
+                  res.status(200).json({
+                    message: "File updated",
+                  });
+                }
+              });
+            }
+          }
+        });
+      }
+      else {
+        res.status(500).json({ error: e.message });
+      }
     }
   } catch (e) {
     res.status(500).json({ error: e.message });
