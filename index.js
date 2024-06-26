@@ -115,6 +115,11 @@ app.post("/entry", auth, async (req, res) => {
 app.post("/delete", auth, async (req, res) => {
   try {
     const { filename } = req.body;
+    if(filename == null || filename == undefined){
+      return res.status(400).json({
+        message: "[DELETE] filename not found",
+      })
+    }
     const user = await User.findById(req.user);
 
     const jsonfilename = path.join(
@@ -130,18 +135,17 @@ app.post("/delete", auth, async (req, res) => {
         if (err) {
           console.log(err);
           res.status(400).json({
-            message: "Error in read",
+            message: "[DELETE] Error in reading json",
           });
         } else {
           data = JSON.parse(data);
           var data2 = [];
           var flag = false;
-          var i = 0;
-          for (; i < data.length; i++) {
-            if (data[i]["filename"] == filename) {
+          for (const manje of data) {
+            if (manje["filename"] == filename) {
               flag = true;
             } else {
-              data2.push(data[i]);
+              data2.push(manje);
             }
           }
           if (flag) {
@@ -152,11 +156,11 @@ app.post("/delete", auth, async (req, res) => {
               if (err) {
                 console.log(err);
                 res.status(400).json({
-                  message: "File update failed",
+                  message: "[DELETE] json File update failed",
                 });
               } else {
                 res.status(200).json({
-                  message: "File updated",
+                  message: "[DELETE] deleted",
                 });
               }
             });
@@ -170,18 +174,17 @@ app.post("/delete", auth, async (req, res) => {
           if (err) {
             console.log(err);
             res.status(400).json({
-              message: "Error in read",
+              message: "[DELETE] Error in reading json",
             });
           } else {
             data = JSON.parse(data);
             var data2 = [];
             var flag = false;
-            var i = 0;
-            for (; i < data.length; i++) {
-              if (data[i]["filename"] == filename) {
+            for (const manje of data) {
+              if (manje["filename"] == filename) {
                 flag = true;
               } else {
-                data2.push(data[i]);
+                data2.push(manje);
               }
             }
             if (flag) {
@@ -192,11 +195,11 @@ app.post("/delete", auth, async (req, res) => {
                 if (err) {
                   console.log(err);
                   res.status(400).json({
-                    message: "File update failed",
+                    message: "[DELETE] json File update failed",
                   });
                 } else {
                   res.status(200).json({
-                    message: "File updated",
+                    message: "[DELETE] deleted",
                   });
                 }
               });
