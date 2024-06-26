@@ -232,6 +232,7 @@ app.post("/download", auth, async (req, res) => {
       } else {
         res.status(200);
         res.contentType("application/pdf");
+        res.setHeader("filename",filename);
         res.send(data);
       }
     });
