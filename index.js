@@ -30,13 +30,14 @@ mongoose
     console.log(e);
   });
 
-app.get("/details", (req, res) => {
-  res.send("works here");
+app.get("/works", (req, res) => {
+  res.status(200).json({
+    message: "server works",
+  });
 });
 
 app.post("/upload", auth, upload.single("file"), (req, res) => {
   const file = req.file;
-
   if (!file) {
     res.status(400).json({
       message: "Failed to upload file",
@@ -52,12 +53,10 @@ app.post("/upload", auth, upload.single("file"), (req, res) => {
 //To display the uploaded files
 app.get("/files", auth, async (req, res) => {
   const user = await User.findById(req.user);
-
   const directoryPath = path.join(
     __dirname,
     "/deptfolders/" + user.departmentnumber + "/"
   );
-
   var fdarray = [];
   // console.log(directoryPath);
   fs.readdir(directoryPath, (error, files) => {
@@ -81,8 +80,8 @@ app.get("/files", auth, async (req, res) => {
 //to read jsondata from designated files
 app.post("/entry", auth, async (req, res) => {
   try {
-    const { eventname, date, natureofevent, id, filename } = req.body;
-    const user = await User.findById(id);
+    const { eventname, date, natureofevent, filename } = req.body;
+    const user = await User.findById(req.user);
 
     var entries = {
       eventname: eventname,
@@ -97,7 +96,6 @@ app.post("/entry", auth, async (req, res) => {
     );
 
     fs.readFile(jsonfilename, "utf8", (err, data) => {
-
       if (err) {
         console.log(err);
         res.status(400).json({
@@ -105,9 +103,7 @@ app.post("/entry", auth, async (req, res) => {
         });
       } else {
         data = JSON.parse(data);
-
         data.push(entries);
-
         fs.writeFile(jsonfilename, JSON.stringify(data), (err) => {
           if (err) {
             console.log(err);
@@ -122,7 +118,9 @@ app.post("/entry", auth, async (req, res) => {
         });
       }
     });
-  } catch (e) {}
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 app.listen(PORT, () => {

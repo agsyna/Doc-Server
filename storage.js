@@ -3,22 +3,12 @@ let path = require('path');
 const mongoose = require("mongoose");
 const User = require("./models/user");
 
-
 const getDestination = async (req, file, cb) => {
-  // const folderName = path.join(__dirname, '/'+req.session.type+req.session.pg);
   const user = await User.findById(req.user);
-  // console.log(user);
-  // console.log();
-
-  
   if (!user) {
     return cb(new Error('User not found'), null);
   }
-
-  
   const folderName = path.join(__dirname, '/deptfolders/'+ user.departmentnumber+'/');
-  console.log(folderName);
-  console.log(__dirname);
   cb(null, `${folderName}`);
 };
 
@@ -29,9 +19,8 @@ const storage = multer.diskStorage({
   },
 });
 
-
 const upload = multer({
-  limits: { fileSize: 300 * 1024 * 1024 }, //300 mbs
+  limits: { fileSize: 5 * 1024 * 1024 }, //5 MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
