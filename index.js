@@ -281,6 +281,7 @@ app.post("/fetchdfiles", auth, async (req, res) => {
 });
 
 app.post("/downloaddeptfiles", auth, async (req, res) => {
+  let fdarray = [];
   const user = await User.findById(req.user);
   if (
     user.departmentnumber == 1 ||
@@ -303,16 +304,22 @@ app.post("/downloaddeptfiles", auth, async (req, res) => {
           (filename.charCodeAt(i) >= 97 && filename.charCodeAt(i) <= 122) ||
           filename.charCodeAt(i) == 32
         ) {
- 
+          console.log("js");
           strs = strs + filename[i];
-        } 
+        } else {
+          console.log("jd" + filename.charCodeAt(i));
+        }
       }
+      console.log("strs :" + strs);
       const dpt = await User.findOne({ departmentname: strs });
+      console.log("dpt " + dpt);
+      console.log("dpt dept no. " + dpt.departmentnumber);
+
       const filePath = path.join(
         __dirname,
         "/deptfolders/" + dpt.departmentnumber + "/" + filename
       );
-      fs.readFileSync(filePath, "utf8", (err, data) => {
+      fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
           console.log("File Not Found");
           res.status(400).json({ message: "File Not Found" });
