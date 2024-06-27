@@ -8,7 +8,7 @@ const multer = require('multer');
 
 authRouter.post("/api/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { departmentname, email, password, departmentnumber, profileurl} = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -22,7 +22,9 @@ authRouter.post("/api/signup", async (req, res) => {
     let user = new User({
       email,
       password: hashedPassword,
-      name,
+      profileurl,
+      departmentname,
+      departmentnumber
     });
     user = await user.save();
     res.json(user);
