@@ -6,32 +6,6 @@ const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
 const multer = require('multer');
 
-authRouter.post("/api/signup", async (req, res) => {
-  try {
-    const { departmentname, email, password, departmentnumber, profileurl} = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ msg: "User with same email already exists!" });
-    }
-
-    const hashedPassword = await bcryptjs.hash(password, 8);
-
-    let user = new User({
-      email,
-      password: hashedPassword,
-      profileurl,
-      departmentname,
-      departmentnumber
-    });
-    user = await user.save();
-    res.json(user);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
 // Sign In
 authRouter.post("/api/signin", async (req, res) => {
   try {

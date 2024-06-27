@@ -249,7 +249,6 @@ app.post("/fetchdfiles", auth, async (req, res) => {
   const directoryPath = path.join(__dirname, "/json/");
   let fdarray = [];
   const user = await User.findById(req.user);
-  
   if (
     user.departmentnumber == 1 ||
     user.departmentnumber == 2 ||
@@ -275,6 +274,58 @@ app.post("/fetchdfiles", auth, async (req, res) => {
     } catch (error) {
       console.error("Failed to read djson", error);
       res.status(400).json({ message: "Failed to read djson" });
+    }
+  } else {
+    res.status(500).json({ message: "Permission Denied" });
+  }
+});
+
+app.post("/downloaddeptfiles", auth, async (req, res) => {
+  const user = await User.findById(req.user);
+  if (
+    user.departmentnumber == 1 ||
+    user.departmentnumber == 2 ||
+    user.departmentnumber == 3
+  ) {
+    try {
+      const { filename } = req.body;
+      if (filename == null || filename == undefined) {
+        return res.status(400).json({
+          message: "[DOWNLOAD] filename not found",
+        });
+      }
+      let strs = "";
+      for (let i = 0; i < filename.length; i++) {
+        if (filename.charCodeAt(i) == 46) {
+          break;
+        } else if (
+          (filename.charCodeAt(i) >= 65 && filename.charCodeAt(i) <= 90) ||
+          (filename.charCodeAt(i) >= 97 && filename.charCodeAt(i) <= 122) ||
+          filename.charCodeAt(i) == 32
+        ) {
+ 
+          strs = strs + filename[i];
+        } 
+      }
+      const dpt = await User.findOne({ departmentname: strs });
+      const filePath = path.join(
+        __dirname,
+        "/deptfolders/" + dpt.departmentnumber + "/" + filename
+      );
+      fs.readFileSync(filePath, "utf8", (err, data) => {
+        if (err) {
+          console.log("File Not Found");
+          res.status(400).json({ message: "File Not Found" });
+        } else {
+          res.status(200);
+          res.contentType("application/pdf");
+          res.setHeader("filename", filename);
+          res.send(data);
+        }
+      });
+    } catch (error) {
+      console.error("Failed to download ", error);
+      res.status(400).json({ message: "Failed to download" });
     }
   } else {
     res.status(500).json({ message: "Permission Denied" });
