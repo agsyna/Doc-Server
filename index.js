@@ -248,26 +248,36 @@ app.post("/download", auth, async (req, res) => {
 app.post("/fetchdfiles", auth, async (req, res) => {
   const directoryPath = path.join(__dirname, "/json/");
   let fdarray = [];
+  const user = await User.findById(req.user);
+  
+  if (
+    user.departmentnumber == 1 ||
+    user.departmentnumber == 2 ||
+    user.departmentnumber == 3
+  ) {
+    try {
+      const files = await fs.promises.readdir(directoryPath);
+      const jsonFiles = files.filter((file) => file.endsWith(".json"));
 
-  try {
-    const files = await fs.promises.readdir(directoryPath);
-    const jsonFiles = files.filter(file => file.endsWith('.json'));
+      const readFilePromises = jsonFiles.map((file) =>
+        fs.promises
+          .readFile(path.join(directoryPath, file), "utf8")
+          .then((data) => JSON.parse(data))
+          .catch((err) => {
+            console.log("Failed to read file" + file, err);
+            throw new Error("Failed to read djson file");
+          })
+      );
 
-    const readFilePromises = jsonFiles.map(file =>
-      fs.promises.readFile(path.join(directoryPath, file), "utf8")
-        .then(data => JSON.parse(data))
-        .catch(err => {
-          console.log('Failed to read file'+ file, err);
-          throw new Error('Failed to read djson file');
-        })
-    );
-
-    fdarray = await Promise.all(readFilePromises);
-    console.log("fdarray:", fdarray);
-    res.status(200).json(fdarray);
-  } catch (error) {
-    console.error("Failed to read djson", error);
-    res.status(400).json({ message: "Failed to read djson" });
+      fdarray = await Promise.all(readFilePromises);
+      console.log("fdarray:", fdarray);
+      res.status(200).json(fdarray);
+    } catch (error) {
+      console.error("Failed to read djson", error);
+      res.status(400).json({ message: "Failed to read djson" });
+    }
+  } else {
+    res.status(500).json({ message: "Permission Denied" });
   }
 });
 
