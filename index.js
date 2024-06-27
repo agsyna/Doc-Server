@@ -281,7 +281,6 @@ app.post("/fetchdfiles", auth, async (req, res) => {
 });
 
 app.post("/downloaddeptfiles", auth, async (req, res) => {
-  let fdarray = [];
   const user = await User.findById(req.user);
   if (
     user.departmentnumber == 1 ||
@@ -292,7 +291,7 @@ app.post("/downloaddeptfiles", auth, async (req, res) => {
       const { filename } = req.body;
       if (filename == null || filename == undefined) {
         return res.status(400).json({
-          message: "[DOWNLOAD] filename not found",
+          message: "[DOWNLOADDEPT] filename not found",
         });
       }
       let strs = "";
@@ -313,7 +312,7 @@ app.post("/downloaddeptfiles", auth, async (req, res) => {
         __dirname,
         "/deptfolders/" + dpt.departmentnumber + "/" + filename
       );
-      fs.readFile(filePath, "utf8", (err, data) => {
+      fs.readFile(filePath, (err, data) => {
         if (err) {
           console.log("File Not Found");
           res.status(400).json({ message: "File Not Found" });
@@ -325,11 +324,10 @@ app.post("/downloaddeptfiles", auth, async (req, res) => {
         }
       });
     } catch (error) {
-      console.error("Failed to download ", error);
-      res.status(400).json({ message: "Failed to download" });
+      res.status(500).json({ error: "Failed to download" });
     }
   } else {
-    res.status(500).json({ message: "Permission Denied" });
+    res.status(500).json({ error: "Permission Denied" });
   }
 });
 
