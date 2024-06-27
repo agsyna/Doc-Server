@@ -115,10 +115,10 @@ app.post("/entry", auth, async (req, res) => {
 app.post("/delete", auth, async (req, res) => {
   try {
     const { filename } = req.body;
-    if(filename == null || filename == undefined){
+    if (filename == null || filename == undefined) {
       return res.status(400).json({
         message: "[DELETE] filename not found",
-      })
+      });
     }
     const user = await User.findById(req.user);
 
@@ -127,7 +127,10 @@ app.post("/delete", auth, async (req, res) => {
       "/json/" + user.departmentnumber + ".json"
     );
 
-    const directoryPath = path.join(__dirname, '/deptfolders/' + user.departmentnumber + '/');
+    const directoryPath = path.join(
+      __dirname,
+      "/deptfolders/" + user.departmentnumber + "/"
+    );
     try {
       fs.unlinkSync(directoryPath + filename);
 
@@ -164,9 +167,8 @@ app.post("/delete", auth, async (req, res) => {
           }
         }
       });
-    }
-    catch (e) {
-      if (e.code === 'ENOENT') {
+    } catch (e) {
+      if (e.code === "ENOENT") {
         fs.readFile(jsonfilename, "utf8", (err, data) => {
           if (err) {
             console.log(err);
@@ -200,8 +202,7 @@ app.post("/delete", auth, async (req, res) => {
             }
           }
         });
-      }
-      else {
+      } else {
         res.status(500).json({ error: e.message });
       }
     }
@@ -213,15 +214,18 @@ app.post("/delete", auth, async (req, res) => {
 //to download
 app.post("/download", auth, async (req, res) => {
   try {
-    const {filename } = req.body;
-    if(filename == null || filename == undefined){
+    const { filename } = req.body;
+    if (filename == null || filename == undefined) {
       return res.status(400).json({
         message: "[DOWNLOAD] filename not found",
-      })
+      });
     }
     const user = await User.findById(req.user);
 
-    const directoryPath = path.join(__dirname, '/deptfolders/' + user.departmentnumber + '/' + filename);
+    const directoryPath = path.join(
+      __dirname,
+      "/deptfolders/" + user.departmentnumber + "/" + filename
+    );
 
     fs.readFile(directoryPath, (err, data) => {
       if (err) {
@@ -232,12 +236,38 @@ app.post("/download", auth, async (req, res) => {
       } else {
         res.status(200);
         res.contentType("application/pdf");
-        res.setHeader("filename",filename);
+        res.setHeader("filename", filename);
         res.send(data);
       }
     });
   } catch (e) {
     res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/fetchdfiles", auth, async (req, res) => {
+  const directoryPath = path.join(__dirname, "/json/");
+  let fdarray = [];
+
+  try {
+    const files = await fs.promises.readdir(directoryPath);
+    const jsonFiles = files.filter(file => file.endsWith('.json'));
+
+    const readFilePromises = jsonFiles.map(file =>
+      fs.promises.readFile(path.join(directoryPath, file), "utf8")
+        .then(data => JSON.parse(data))
+        .catch(err => {
+          console.log('Failed to read file'+ file, err);
+          throw new Error('Failed to read djson file');
+        })
+    );
+
+    fdarray = await Promise.all(readFilePromises);
+    console.log("fdarray:", fdarray);
+    res.status(200).json(fdarray);
+  } catch (error) {
+    console.error("Failed to read djson", error);
+    res.status(400).json({ message: "Failed to read djson" });
   }
 });
 
