@@ -304,16 +304,10 @@ app.post("/downloaddeptfiles", auth, async (req, res) => {
           (filename.charCodeAt(i) >= 97 && filename.charCodeAt(i) <= 122) ||
           filename.charCodeAt(i) == 32
         ) {
-          console.log("js");
           strs = strs + filename[i];
-        } else {
-          console.log("jd" + filename.charCodeAt(i));
         }
       }
-      console.log("strs :" + strs);
       const dpt = await User.findOne({ departmentname: strs });
-      console.log("dpt " + dpt);
-      console.log("dpt dept no. " + dpt.departmentnumber);
 
       const filePath = path.join(
         __dirname,
