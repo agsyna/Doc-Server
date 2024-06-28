@@ -269,7 +269,6 @@ app.post("/fetchdfiles", auth, async (req, res) => {
       );
 
       fdarray = await Promise.all(readFilePromises);
-      console.log("fdarray:", fdarray);
       res.status(200).json(fdarray);
     } catch (error) {
       console.error("Failed to read djson", error);
