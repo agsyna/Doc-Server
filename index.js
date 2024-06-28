@@ -261,7 +261,13 @@ app.post("/fetchdfiles", auth, async (req, res) => {
       const readFilePromises = jsonFiles.map((file) =>
         fs.promises
           .readFile(path.join(directoryPath, file), "utf8")
-          .then((data) => JSON.parse(data))
+          .then((data) => {
+            const jsonData = JSON.parse(data);
+            const key = file.substring(0, file.length-5);
+            const result = {};
+            result[key] = jsonData;
+            return result;
+          })
           .catch((err) => {
             console.log("Failed to read file" + file, err);
             throw new Error("Failed to read djson file");
