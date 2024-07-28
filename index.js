@@ -6,6 +6,7 @@ const User = require("./models/user");
 const upload = require("./storage");
 let path = require("path");
 const fs = require("fs");
+// const cors = require("cors");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -13,9 +14,11 @@ const app = express();
 app.use(express.json());
 app.use(authRouter);
 app.use(express.static(__dirname + "/public/assets"));
+// app.use(cors());
+
 
 const DB =
-  "mongodb+srv://syna:syna%401234@cluster0.5qwieuf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb://localhost:27017/autodoc";
 
 mongoose
   .connect(DB)
